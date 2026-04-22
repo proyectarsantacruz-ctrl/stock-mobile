@@ -1,7 +1,7 @@
 /* Service worker minimalista para que la app sea instalable como PWA.
    No cacheamos respuestas de la API porque queremos stock fresco siempre. */
 
-const CACHE_NAME = "stock-mobile-v4";
+const CACHE_NAME = "stock-mobile-v5";
 const SHELL = [
   "/",
   "/static/style.css",
