@@ -1,0 +1,198 @@
+=======================================================
+  DEPLOY A RENDER + ARMAR APK CON PWABUILDER
+  (Esto se hace UNA SOLA VEZ)
+=======================================================
+
+Son 2 partes:
+  A) Subir Flask a Render (10 min) → te da una URL HTTPS pública
+  B) Usar esa URL en PWABuilder para generar la APK (5 min)
+
+Resultado final: APK que instalás en el Android y funciona desde cualquier
+lado (WiFi o datos). La PC ya no necesita estar prendida.
+
+
+===========================================
+  PARTE A — DEPLOY A RENDER
+===========================================
+
+A.1 — CREAR CUENTA EN GITHUB (si no tenés)
+------------------------------------------
+   → https://github.com/signup
+   Solo email y contraseña. Gratis. Después confirmá el email.
+
+
+A.2 — CREAR UN REPOSITORIO VACÍO
+--------------------------------
+   → https://github.com/new
+   - Repository name: stock-mobile
+   - Dejalo como "Public" o "Private" (cualquiera sirve)
+   - NO tildes ninguna opción de "Initialize with README/gitignore/license"
+     (el repo tiene que estar vacío para pushear lo que ya tenemos).
+   - Click "Create repository"
+
+   Te va a aparecer una pantalla con comandos. Ignorá esos, usá los de A.3.
+
+
+A.3 — GENERAR UN TOKEN PARA PUSHEAR
+-----------------------------------
+   GitHub ya no acepta contraseña via terminal. Hay que generar un token.
+
+   → https://github.com/settings/tokens/new
+   - Note: "stock-mobile-push"
+   - Expiration: "No expiration"  (o 1 año si preferís)
+   - Scopes: tildá solo "repo"
+   - Scroll abajo → "Generate token"
+   - COPIÁ EL TOKEN (arranca con ghp_...). Solo se muestra UNA vez.
+
+
+A.4 — PUSHEAR EL CÓDIGO
+-----------------------
+   Abrí la terminal en la carpeta stock-mobile/ y corré:
+
+     cd /Users/andresdlp/Desktop/CLAUDE/stock-mobile
+     git remote add origin https://github.com/TU-USUARIO/stock-mobile.git
+     git push -u origin main
+
+   Reemplazá TU-USUARIO por tu usuario de GitHub.
+
+   Te va a pedir:
+     Username: tu usuario de GitHub
+     Password: PEGÁ EL TOKEN (no tu contraseña real)
+
+   Si sale "Writing objects: 100% ... done" → todo pusheado. Entrá al repo
+   en GitHub, tenés que ver todos los archivos arriba.
+
+
+A.5 — CREAR CUENTA EN RENDER
+----------------------------
+   → https://render.com/register
+   Podés usar "Sign in with GitHub" → más rápido.
+
+
+A.6 — CREAR UN "WEB SERVICE" DESDE EL REPO
+------------------------------------------
+   Dashboard de Render → "+ New" → "Web Service" → "Build and deploy from
+   a Git repository" → "Next"
+
+   - Conectá tu cuenta de GitHub (te pide permisos, autorizá)
+   - Buscá "stock-mobile" en la lista → "Connect"
+
+   Render autocompleta todo mirando render.yaml. Solo confirmá:
+     - Name: stock-mobile (o el nombre que quieras — va a ser tu URL)
+     - Region: Oregon
+     - Branch: main
+     - Instance Type: Free
+
+   Scroll abajo → "Create Web Service"
+
+
+A.7 — CONFIGURAR LAS VARIABLES DE ENTORNO
+-----------------------------------------
+   Render va a empezar a deployar pero va a fallar porque faltan los
+   secretos. Eso es esperado.
+
+   En el dashboard del servicio → pestaña "Environment" (menú izquierdo)
+   → "Add Environment Variable" y agregá estas 4:
+
+     STORE_ID       = 6749925
+     ACCESS_TOKEN   = 2b7b342271c8cffd09574aafbf63621556a09fbf
+     USER_AGENT     = Gestor de Stock Rapido (info@digitalstone.com.ar)
+     APP_PASSWORD   = Maldito82
+
+   (El SECRET_KEY lo genera Render solo porque tiene "generateValue: true"
+   en render.yaml, no hace falta.)
+
+   Click "Save Changes". Render va a redeployar automáticamente.
+
+
+A.8 — ESPERAR EL DEPLOY
+-----------------------
+   Volvé a la pestaña "Events" o "Logs". Va a tardar ~3 minutos la primera
+   vez. Cuando veas:
+     "Your service is live 🎉"
+   copiá la URL de arriba — algo como:
+
+     https://stock-mobile.onrender.com
+
+   Abrila en el browser. Te tiene que pedir contraseña (Maldito82) y entrar
+   a la app. Probá búsqueda de texto primero (la cámara ya va a andar en
+   Chrome mobile porque es HTTPS real).
+
+
+===========================================
+  PARTE B — GENERAR LA APK
+===========================================
+
+B.1 — IR A PWABUILDER
+---------------------
+   → https://www.pwabuilder.com/
+
+   - Pegá la URL de Render: https://stock-mobile.onrender.com
+   - Click "Start"
+
+
+B.2 — REVISAR EL SCORE
+----------------------
+   Te va a mostrar un análisis de tu PWA con 3 categorías:
+     - Manifest
+     - Service Worker
+     - App Capabilities
+
+   Nuestra app ya tiene las 3 cosas configuradas, así que deberían estar
+   en verde o amarillo. Si alguna sale en rojo, avisame y lo arreglo.
+
+
+B.3 — GENERAR PACKAGE PARA ANDROID
+----------------------------------
+   - Click "Package For Stores" arriba a la derecha
+   - Elegí "Android"
+   - Opciones:
+     * Package ID: com.digitalstone.stockmobile
+     * App name: Stock
+     * Short name: Stock
+     * Host: stock-mobile.onrender.com  (autocompletado)
+     * Launcher name: Stock
+     * Todas las demás opciones por default están bien.
+   - Click "Generate" o "Download Package"
+
+
+B.4 — INSTALAR LA APK EN EL CELU
+--------------------------------
+   Te descarga un .zip con varios archivos. El que te importa es:
+     stock-signed.apk  (o similar con "apk" en el nombre)
+
+   Para instalarla:
+     - Pasá la APK al celu (Drive, WhatsApp a vos mismo, USB, lo que sea).
+     - En el celu, tocá el archivo APK.
+     - Android te va a pedir permiso para "Instalar apps de fuentes
+       desconocidas" — aceptá.
+     - Instalar → listo, tenés el ícono "Stock" en la pantalla principal.
+
+
+===========================================
+  LISTO. CÓMO USAR A PARTIR DE AHORA
+===========================================
+
+Tocás el ícono de Stock → se abre como app nativa, pantalla completa.
+Hacés login con Maldito82. Buscás con texto o con la cámara. Funciona
+desde cualquier red (WiFi, datos móviles).
+
+La primera consulta del día puede tardar ~30 segundos porque el servidor
+gratis de Render "duerme" después de 15 min sin uso. Después va normal.
+
+
+===========================================
+  MANTENIMIENTO
+===========================================
+
+Si cambiás algo del código y querés actualizar:
+  cd /Users/andresdlp/Desktop/CLAUDE/stock-mobile
+  git add -A
+  git commit -m "descripción del cambio"
+  git push
+
+Render detecta el push y redeploya solo. La app del celu se actualiza sola
+la próxima vez que la abras (porque el service worker baja los cambios).
+
+Si querés renombrar la app, cambiar ícono, etc., se vuelven a generar
+la APK con PWABuilder y se reinstala en el celu. No hay que tocar Render.
