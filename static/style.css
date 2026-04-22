@@ -166,6 +166,9 @@ body {
   padding-top: env(safe-area-inset-top, 0);
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
+.scanner-overlay[hidden] {
+  display: none !important;
+}
 .scanner-top, .scanner-bottom {
   background: rgba(0,0,0,0.85);
   color: white;
