@@ -1,0 +1,110 @@
+===========================================
+  STOCK MOBILE - Digital Stone
+  Consulta de stock desde el celular
+===========================================
+
+QUE ES ESTO
+-----------
+App web responsive (optimizada para celular) que se conecta a Tienda Nube
+y te deja buscar productos por codigo de barras o por texto. Muestra foto,
+precio y stock. Es SOLO LECTURA: no modifica nada en la tienda.
+
+No reemplaza la app de PC (gestion de stock completa) - es un complemento
+para consultar rapido desde el mostrador.
+
+
+COMO ARRANCARLA (en la PC)
+--------------------------
+Hace doble-click en iniciar.command
+
+La primera vez te va a pedir permiso para instalar dependencias.
+Se abre una terminal con dos direcciones:
+
+  PC (testeo):   https://127.0.0.1:5001
+  Celular:       https://192.168.X.X:5001   <-- esta es la que usas
+
+ATENCION: la app corre en https (necesario para que la camara del celu
+funcione). El certificado es auto-generado, asi que la primera vez el
+browser te va a avisar "conexion no privada" / "certificado no confiable".
+
+Eso es esperado. Tenes que:
+  - iPhone Safari: Tocar "Mostrar detalles" -> "visitar este sitio web"
+  - Android Chrome: Tocar "Avanzado" -> "Continuar a ..."
+
+Lo haces UNA VEZ y despues entra directo.
+
+
+COMO USARLA DESDE EL CELU
+--------------------------
+1. El celu tiene que estar en la MISMA WIFI que la PC.
+2. Abri el navegador y meté la direccion que te muestra la terminal.
+   Ej: https://192.168.1.50:5001
+3. Aceptá el certificado (solo la primera vez).
+4. Ingresá la contraseña: Maldito82
+5. Buscá:
+   - Tocás el boton con el icono de codigo de barras -> se abre la camara
+     -> apuntás al codigo -> te busca solo.
+   - O escribis en el input (nombre, SKU, numero de codigo) -> busca mientras
+     tipeas.
+6. Toca el boton de "refrescar" (circulo con flecha, arriba a la derecha)
+   si querés traer cambios recientes del catalogo de Tienda Nube.
+
+
+INSTALAR COMO APP EN EL CELU (PWA)
+-----------------------------------
+iPhone (Safari):
+  - Boton "Compartir" (cuadrado con flecha hacia arriba)
+  - "Agregar a pantalla de inicio"
+  - Le queda un icono en la home igual que una app.
+
+Android (Chrome):
+  - Menu de 3 puntos arriba a la derecha
+  - "Agregar a pantalla de inicio" o "Instalar app"
+
+
+CONTRASEÑAS
+-----------
+Ingreso a la app: Maldito82   (misma que la app de PC)
+
+Si queres cambiarla, edita config.py -> APP_PASSWORD y reinicia el servidor.
+
+
+PUERTOS Y CONFLICTOS
+--------------------
+Esta app corre en el puerto 5001.
+La app de PC (juego/) corre en el 5000.
+Las dos pueden estar prendidas al mismo tiempo sin problema.
+
+
+PROBLEMAS COMUNES
+-----------------
+
+"No puedo entrar desde el celu":
+  - Confirmá que PC y celu esten en la misma red WiFi (no 4G, no otra red).
+  - Algunos routers aislan dispositivos ("AP isolation" o "Client isolation").
+    Si pasa eso, entrá al router y desactivá esa opcion.
+  - El firewall de la Mac puede bloquear. En Preferencias del Sistema ->
+    Seguridad -> Firewall -> permitir python3.
+
+"La camara no abre":
+  - Tiene que ser https:// (no http://). Si pusiste http, no va a andar.
+  - Aceptá los permisos de camara que te pide el browser.
+  - En Safari iOS, la camara solo funciona en Safari (no en Chrome iOS via
+    PWA por limitaciones de Apple).
+
+"Pagina con warning de 'conexion no privada'":
+  - Es el certificado auto-firmado. Dale continuar. Es seguro porque es tu
+    propia PC en tu propia red.
+
+
+SOPORTE / DEV NOTES
+-------------------
+Archivos clave:
+  - config.py     -> credenciales de Tienda Nube y contraseña de ingreso
+  - app.py        -> servidor Flask
+  - templates/    -> HTML (login, pagina principal)
+  - static/       -> CSS, JS, logo, iconos PWA
+  - iniciar.command -> launcher para Mac
+
+El catalogo de Tienda Nube se trae entero la primera vez y queda en memoria.
+Refresca con el boton circular de arriba a la derecha o reiniciando.

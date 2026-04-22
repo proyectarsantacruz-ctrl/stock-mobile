@@ -1,0 +1,99 @@
+===========================================
+  INSTALAR CERTIFICADO EN EL iPHONE
+  (se hace UNA SOLA VEZ, queda para siempre)
+===========================================
+
+POR QUE HAY QUE HACER ESTO
+--------------------------
+Para que la cámara del celu funcione en la app, la conexión al
+servidor tiene que ser HTTPS "de verdad". Como estamos corriendo
+todo en tu propia PC (no en un servidor público), generamos un
+certificado propio usando mkcert.
+
+El celu no conoce a ese "emisor" del certificado, así que no le
+cree. Instalando el certificado raíz (rootCA) una sola vez, le
+estás diciendo al iPhone "estos certificados los creo yo, confiá".
+
+Despues de esto, Safari va a mostrar el candado verde completo
+y la camara va a funcionar.
+
+
+PASO 1: DESCARGAR EL CERT EN EL iPHONE
+---------------------------------------
+El iPhone tiene que estar en la misma WiFi que la PC.
+
+1. Arrancá la app en la PC (doble-click en iniciar.command).
+2. En Safari del iPhone, entrá a:
+
+     https://192.168.0.107:5001/rootCA.pem
+
+   (o la IP que te muestra la terminal cuando arranca).
+
+3. Safari te va a decir "conexión no privada" la primera vez.
+   Tocá "Mostrar detalles" → "Visitar este sitio web". Esto es
+   esperado y se hace solo esta primera vez.
+
+4. Safari va a descargar un archivo y preguntarte:
+   "Este sitio web intenta descargar un perfil de configuración.
+   ¿Permitir?"
+   Tocá "PERMITIR".
+
+5. Va a aparecer: "Perfil descargado". Cerrá ese aviso.
+
+
+PASO 2: INSTALAR EL PERFIL
+--------------------------
+1. Andá a:
+     Ajustes (la app gris de engranaje)
+     → General
+     → VPN y gestión de dispositivos
+
+2. Vas a ver un perfil descargado que se llama:
+     "mkcert development CA"
+   Tocalo.
+
+3. Tocá "Instalar" (arriba a la derecha, puede pedirte el PIN del celu).
+4. Aparece un warning — tocá "Instalar" de nuevo.
+5. Tocá "Instalar" una tercera vez al final.
+6. "Listo" arriba a la derecha.
+
+
+PASO 3: CONFIAR EN EL CERTIFICADO (IMPORTANTE)
+----------------------------------------------
+Este paso es fácil de olvidar. Sin esto no funciona.
+
+1. Andá a:
+     Ajustes
+     → General
+     → Información
+     → Ajustes de confianza de certificados
+
+2. Vas a ver "mkcert development CA" con un switch gris.
+3. **Activá el switch** (se pone verde).
+4. Tocá "Continuar" en el warning.
+
+
+LISTO
+-----
+Ahora entrá a la app normalmente:
+
+     https://192.168.0.107:5001
+     (o https://MacBook-Air-de-Andres.local:5001)
+
+Safari ya no muestra warnings. El candado está cerrado.
+Tocás el botón de la cámara y ANDÁ 🎉
+
+Este certificado es válido hasta julio de 2028 (más de 3 años).
+Cuando se acerque la fecha, lo regeneramos y repetís los pasos.
+
+
+SI CAMBIA TU IP LOCAL
+---------------------
+El certificado ya incluye varias IPs comunes (192.168.0.106 a .110
+y 192.168.1.107). Si tu router te asigna una IP que no está,
+tenés que regenerar el cert. Avisame y lo hacemos.
+
+Lo mejor es usar el nombre de host fijo:
+     https://MacBook-Air-de-Andres.local:5001
+
+Ese no cambia nunca (funciona via Bonjour/mDNS).

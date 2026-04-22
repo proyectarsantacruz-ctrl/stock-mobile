@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+*.pyc
+
+# Certs / claves (NO subir nunca)
+certs/
+bin/
+
+# Config local con secretos (NO subir)
+config.py
+
+# macOS
+.DS_Store
+
+# Logs / DB locales
+*.log
+*.db

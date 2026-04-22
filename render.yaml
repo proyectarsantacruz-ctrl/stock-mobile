@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: stock-mobile
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 60
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: STORE_ID
+        sync: false
+      - key: ACCESS_TOKEN
+        sync: false
+      - key: USER_AGENT
+        sync: false
+      - key: APP_PASSWORD
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
